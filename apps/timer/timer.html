@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Timer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f4f4f4;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 400px;
+      padding: 20px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+
+    input[type="number"] {
+      width: 100px;
+      font-size: 1.5rem;
+      text-align: center;
+      padding: 5px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      font-size: 1.2rem;
+      padding: 10px 20px;
+      margin-top: 20px;
+      cursor: pointer;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+
+    button:disabled {
+      background-color: #ccc;
+    }
+
+    .options {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Timer</h1>
+  <div>
+    <label for="timeInput">Time (minutes): </label>
+    <input type="number" id="timeInput" min="1" placeholder="Minutes">
+  </div>
+  <button id="startBtn" onclick="startTimer()">Start</button>
+
+  <div class="options">
+    <label for="autorepeat">Autorepeat: </label>
+    <input type="checkbox" id="autorepeat">
+  </div>
+
+  <p id="timeDisplay">00:00</p>
+</div>
+
+<audio id="alarmSound" src="./phone-ringing.mp3" preload="auto"></audio>
+
+<script>
+  let timer;
+  let timeLeft;
+  let isRunning = false;
+
+  function startTimer() {
+    const timeInput = document.getElementById("timeInput");
+    timeLeft = parseInt(timeInput.value) * 60; // Convert minutes to seconds
+    if (isNaN(timeLeft) || timeLeft <= 0) {
+      alert("Please enter a valid time.");
+      return;
+    }
+
+    isRunning = true;
+    document.getElementById("startBtn").disabled = true;
+    timer = setInterval(updateTimer, 1000);
+  }
+
+  function updateTimer() {
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      document.getElementById("timeDisplay").textContent = "00:00";
+      document.getElementById("alarmSound").play();
+
+      if (document.getElementById("autorepeat").checked) {
+        startTimer();
+      } else {
+        isRunning = false;
+        document.getElementById("startBtn").disabled = false;
+      }
+    } else {
+      timeLeft--;
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+      document.getElementById("timeDisplay").textContent = `${minutes < 10 ? "0" : ""}${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+    }
+  }
+</script>
+
+</body>
+</html>
